@@ -13,5 +13,8 @@ Rails.application.routes.draw do
   resources :stores do
     resources :images, :deliveries, :reviews
   end
+  resources :mattresses do
+    resources :sizes
+  end
   resources :categories, :categories_products, :financings
 end

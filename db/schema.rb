@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180531194206) do
+ActiveRecord::Schema.define(version: 20180620015802) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -100,6 +100,13 @@ ActiveRecord::Schema.define(version: 20180531194206) do
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.index ["brand_id"], name: "index_mattresses_on_brand_id", using: :btree
+  end
+
+  create_table "mattresses_users", force: :cascade do |t|
+    t.integer "mattress_id"
+    t.integer "user_id"
+    t.index ["mattress_id"], name: "index_mattresses_users_on_mattress_id", using: :btree
+    t.index ["user_id"], name: "index_mattresses_users_on_user_id", using: :btree
   end
 
   create_table "prices", force: :cascade do |t|
@@ -193,7 +200,10 @@ ActiveRecord::Schema.define(version: 20180531194206) do
     t.decimal  "price"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.integer  "user_id"
+    t.decimal  "mat_only"
     t.index ["mattress_id"], name: "index_sizes_on_mattress_id", using: :btree
+    t.index ["user_id"], name: "index_sizes_on_user_id", using: :btree
   end
 
   create_table "stores", force: :cascade do |t|

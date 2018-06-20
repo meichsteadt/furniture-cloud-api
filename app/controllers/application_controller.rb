@@ -43,7 +43,7 @@ class ApplicationController < ActionController::API
     if @sort_by === "price"
       return products.joins(:set_prices).where(set_prices: {user_id: current_user.id}).order("set_prices.price desc")
     else
-      return products.order("name asc").distinct
+      return products.order("name asc")
     end
   end
 

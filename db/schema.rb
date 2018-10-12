@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180620015802) do
+ActiveRecord::Schema.define(version: 20181007173210) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,10 +25,10 @@ ActiveRecord::Schema.define(version: 20180620015802) do
 
   create_table "categories", force: :cascade do |t|
     t.string   "name"
-    t.string   "parent_category"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
     t.string   "image"
+    t.integer  "parent_category_id"
   end
 
   create_table "categories_products", force: :cascade do |t|
@@ -107,6 +107,13 @@ ActiveRecord::Schema.define(version: 20180620015802) do
     t.integer "user_id"
     t.index ["mattress_id"], name: "index_mattresses_users_on_mattress_id", using: :btree
     t.index ["user_id"], name: "index_mattresses_users_on_user_id", using: :btree
+  end
+
+  create_table "parent_categories", force: :cascade do |t|
+    t.string  "name"
+    t.string  "image"
+    t.integer "user_id"
+    t.index ["user_id"], name: "index_parent_categories_on_user_id", using: :btree
   end
 
   create_table "prices", force: :cascade do |t|

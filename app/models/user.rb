@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
   has_many :stores
+  has_many :parent_categories
   has_and_belongs_to_many :products
   has_and_belongs_to_many :mattresses
   has_and_belongs_to_many :promotions

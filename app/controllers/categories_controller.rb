@@ -6,7 +6,7 @@ class CategoriesController < ApplicationController
   end
 
   def show
-    render json: current_user.categories.where(parent_category: params[:id])
+    render json: current_user.categories.where(parent_category_id: ParentCategory.find_by("lower(name) = ?", params[:id]).id)
   end
 
   def create

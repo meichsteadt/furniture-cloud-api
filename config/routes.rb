@@ -16,5 +16,5 @@ Rails.application.routes.draw do
   resources :mattresses do
     resources :sizes
   end
-  resources :categories, :categories_products, :financings
+  resources :categories, :categories_products, :financings ,:parent_categories
 end

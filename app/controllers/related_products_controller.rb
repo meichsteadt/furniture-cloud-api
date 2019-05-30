@@ -1,7 +1,7 @@
 class RelatedProductsController < ApplicationController
   before_action :set_product
   def index
-    render json: @product.related_products.map {|e| Product.find(e.related_product_id)}
+    render json: current_user.products.where(id: @product.related_products.pluck(:related_product_id))
   end
 
 private

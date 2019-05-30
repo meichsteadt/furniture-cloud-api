@@ -37,7 +37,7 @@ private
   end
 
   def store_params
-    params.require(:store).permit(:name, :address, :city, :state, :zip, :phone, :email, :hours)
+    params.require(:store).permit(:id, :name, :address, :city, :state, :zip, :phone, :email, :hours)
   end
 
 end

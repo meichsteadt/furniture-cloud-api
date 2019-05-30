@@ -19,6 +19,6 @@ private
   end
 
   def allowed_params
-    params.permit(:promotion_id)
+    params.permit(:promotion_id, :page_number, :max_price, :min_price, :id)
   end
 end

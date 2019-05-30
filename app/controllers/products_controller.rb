@@ -5,7 +5,8 @@ class ProductsController < ApplicationController
   end
 
   def show
-    render json: {product: @product, set_price: @product.get_price(current_user)}
+    promo = @product.promo(current_user)
+    render json: {product: @product, set_price: @product.get_price(current_user), promo_price: promo[:price], promo_discount: promo[:discount], on_promo: !promo[:price].nil?}
   end
 
   def create
@@ -37,6 +38,6 @@ private
   end
 
   def product_params
-    params.require(:product).permit(:name, :description, :brand_id, :image)
+    params.require(:product).permit(:name, :description, :brand_id, :image, :page_number, :max_price, :min_price, :sort_by)
   end
 end

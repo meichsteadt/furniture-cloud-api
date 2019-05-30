@@ -13,4 +13,27 @@ class Product < ApplicationRecord
     rescue
       nil
   end
+
+  def promo(user)
+    discount = user.promotions.joins(:products).where("products.id = ?", self.id).distinct.pluck(:discount).min
+    if discount
+      price =  discount * self.get_price(user)
+      return {price: price, discount: discount}
+    else
+      return {price: nil, discount: nil}
+    end
+  end
+
+  def self.search(query, current_user, sort_by)
+    product = (current_user.products.where("lower(name) LIKE ? OR lower(description) LIKE ? OR lower(set_name) LIKE ?", "%#{query.downcase}%", "%#{query.downcase}%", "%#{query.downcase}%") || current_user.products.joins(:brand).where("lower(brands.name) LIKE ?", "%#{query.downcase}%") ||
+    current_user.products.joins(:categories).where("lower(categories.name) LIKE ?", "%#{query.downcase}%") ||
+    current_user.products.joins(:product_items).where("lower(product_items.name) LIKE ?", "%#{query.downcase}%"))
+
+    mattresses = current_user.mattresses.where("lower(name) LIKE ?", "%#{query.downcase}%")
+    {products: product, mattresses: mattresses}
+  end
+
+  def set_related_products
+
+  end
 end

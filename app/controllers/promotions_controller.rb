@@ -21,7 +21,7 @@ class PromotionsController < ApplicationController
   def update
     if @promotion.update(promotion_params)
       @promotion.products.delete_all
-      product_ids.each {|e| @promotion.products << Product.find(e)} 
+      product_ids.each {|e| @promotion.products << Product.find(e)}
       render json: {message: "promotion item updated successfully"}
     else
       render json: @promotion.errors, :status => :unprocessable_entity
@@ -40,7 +40,7 @@ class PromotionsController < ApplicationController
   end
 
   def promotion_params
-    params.require(:promotion).permit(:name, :url, :image, :discount)
+    params.require(:promotion).permit(:name, :url, :image, :discount, :promotion_id, :page_number, :max_price, :min_price, :id)
   end
 
   def product_ids

@@ -1,0 +1,2 @@
+class NavTop < ApplicationRecord
+end

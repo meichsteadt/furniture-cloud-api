@@ -51,13 +51,13 @@ class ApplicationController < ActionController::API
   def order_by(products)
     params.permit(:sort_by)[:sort_by] ? @sort_by = params.permit(:sort_by)[:sort_by] : @sort_by = "az"
     if @sort_by === "price"
-      return products.joins(:set_prices).where(set_prices: {user_id: current_user.id}).order("set_prices.price desc")
+      products.joins(:set_prices).left_joins(:promotions).order("coalesce(promotions.discount, 1) * set_prices.price desc")
     else
       return products.order("name asc")
     end
   end
 
   def filter_prices(products)
-    products.joins(:set_prices).where("set_prices.price >= ? AND set_prices.price <= ?", @min_price.to_f, @max_price.to_f)
+    products.joins(:set_prices).left_joins(:promotions).where("set_prices.price >= ? AND set_prices.price <= ? AND set_prices.user_id = ?", @min_price.to_f, @max_price.to_f, current_user.id)
   end
 end

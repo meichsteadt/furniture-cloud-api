@@ -1,7 +1,7 @@
 class PromotionsController < ApplicationController
   before_action :set_promotion, only: [:show, :destroy, :update]
   def index
-    render json: current_user.promotions
+    render json: current_user.promotions.order("created_at desc")
   end
 
   def show

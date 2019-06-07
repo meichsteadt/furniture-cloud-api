@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190524201406) do
+ActiveRecord::Schema.define(version: 20190607223637) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,10 +25,11 @@ ActiveRecord::Schema.define(version: 20190524201406) do
 
   create_table "categories", force: :cascade do |t|
     t.string   "name"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
     t.string   "image"
     t.integer  "parent_category_id"
+    t.boolean  "has_sets",           default: false
   end
 
   create_table "categories_products", force: :cascade do |t|
@@ -75,6 +76,19 @@ ActiveRecord::Schema.define(version: 20190524201406) do
     t.index ["store_id"], name: "index_images_on_store_id", using: :btree
   end
 
+  create_table "locations", force: :cascade do |t|
+    t.integer  "store_id"
+    t.string   "address"
+    t.string   "city"
+    t.string   "state"
+    t.integer  "zip"
+    t.string   "phone"
+    t.string   "email"
+    t.string   "hours"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "materials", force: :cascade do |t|
     t.string   "name"
     t.string   "image"
@@ -109,6 +123,16 @@ ActiveRecord::Schema.define(version: 20190524201406) do
     t.index ["user_id"], name: "index_mattresses_users_on_user_id", using: :btree
   end
 
+  create_table "nav_tops", force: :cascade do |t|
+    t.string   "copy"
+    t.integer  "user_id"
+    t.string   "color"
+    t.string   "link"
+    t.string   "shape"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "parent_categories", force: :cascade do |t|
     t.string  "name"
     t.string  "image"
@@ -137,12 +161,13 @@ ActiveRecord::Schema.define(version: 20190524201406) do
   create_table "products", force: :cascade do |t|
     t.string   "name"
     t.integer  "brand_id"
-    t.string   "image"
     t.text     "description"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
     t.string   "thumbnail"
     t.string   "set_name"
+    t.string   "images",      default: [],              array: true
+    t.string   "set_desc"
     t.index ["brand_id"], name: "index_products_on_brand_id", using: :btree
   end
 
@@ -151,6 +176,11 @@ ActiveRecord::Schema.define(version: 20190524201406) do
     t.integer "promotion_id"
     t.index ["product_id"], name: "index_products_promotions_on_product_id", using: :btree
     t.index ["promotion_id"], name: "index_products_promotions_on_promotion_id", using: :btree
+  end
+
+  create_table "products_set_types", force: :cascade do |t|
+    t.integer "product_id"
+    t.integer "set_type_id"
   end
 
   create_table "products_users", force: :cascade do |t|
@@ -166,13 +196,7 @@ ActiveRecord::Schema.define(version: 20190524201406) do
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
     t.decimal  "discount",   default: "0.9"
-  end
-
-  create_table "promotions_users", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "promotion_id"
-    t.index ["promotion_id"], name: "index_promotions_users_on_promotion_id", using: :btree
-    t.index ["user_id"], name: "index_promotions_users_on_user_id", using: :btree
+    t.integer  "user_id"
   end
 
   create_table "related_products", force: :cascade do |t|
@@ -201,6 +225,14 @@ ActiveRecord::Schema.define(version: 20190524201406) do
     t.index ["user_id"], name: "index_set_prices_on_user_id", using: :btree
   end
 
+  create_table "set_types", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "category_id"
+    t.string   "image"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
   create_table "sizes", force: :cascade do |t|
     t.integer  "mattress_id"
     t.string   "name"
@@ -214,17 +246,9 @@ ActiveRecord::Schema.define(version: 20190524201406) do
   end
 
   create_table "stores", force: :cascade do |t|
-    t.string   "name"
-    t.string   "address"
-    t.string   "city"
-    t.string   "state"
-    t.integer  "zip"
-    t.string   "phone"
-    t.string   "email"
-    t.string   "hours"
     t.integer  "user_id"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
     t.string   "google_maps"
     t.string   "yelp"
     t.string   "facebook"
@@ -232,6 +256,11 @@ ActiveRecord::Schema.define(version: 20190524201406) do
     t.string   "google_reviews_id"
     t.string   "twitter"
     t.string   "yellow_pages"
+    t.boolean  "show_prices",       default: true
+    t.boolean  "promotions",        default: true
+    t.float    "markup_default",    default: 2.2
+    t.string   "name"
+    t.string   "logo"
   end
 
   create_table "user_keys", force: :cascade do |t|
@@ -247,11 +276,9 @@ ActiveRecord::Schema.define(version: 20190524201406) do
     t.string   "name"
     t.string   "email"
     t.string   "password_digest"
-    t.datetime "created_at",                      null: false
-    t.datetime "updated_at",                      null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
     t.string   "google_analytics"
-    t.boolean  "show_prices",      default: true
-    t.boolean  "promotions",       default: true
   end
 
   add_foreign_key "categories_users", "categories"

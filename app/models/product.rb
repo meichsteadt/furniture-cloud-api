@@ -6,6 +6,7 @@ class Product < ApplicationRecord
   has_and_belongs_to_many :users
   has_and_belongs_to_many :promotions
   has_and_belongs_to_many :categories
+  has_and_belongs_to_many :set_types
   paginates_per 48
 
   def get_price(user)
@@ -25,7 +26,7 @@ class Product < ApplicationRecord
   end
 
   def self.search(query, current_user, sort_by)
-    product = (current_user.products.where("lower(name) LIKE ? OR lower(description) LIKE ? OR lower(set_name) LIKE ?", "%#{query.downcase}%", "%#{query.downcase}%", "%#{query.downcase}%") || current_user.products.joins(:brand).where("lower(brands.name) LIKE ?", "%#{query.downcase}%") ||
+    product = (current_user.products.where("lower(products.name) LIKE ? OR lower(products.description) LIKE ? OR lower(products.set_name) LIKE ?", "%#{query.downcase}%", "%#{query.downcase}%", "%#{query.downcase}%") || current_user.products.joins(:brand).where("lower(brands.name) LIKE ?", "%#{query.downcase}%") ||
     current_user.products.joins(:categories).where("lower(categories.name) LIKE ?", "%#{query.downcase}%") ||
     current_user.products.joins(:product_items).where("lower(product_items.name) LIKE ?", "%#{query.downcase}%"))
 

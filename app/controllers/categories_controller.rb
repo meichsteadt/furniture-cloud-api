@@ -2,11 +2,11 @@ class CategoriesController < ApplicationController
   before_action :set_category, only: [:destroy, :update]
 
   def index
-    render json: current_user.categories.pluck(:parent_category).distinct
+    render json: current_user.categories.joins(:products).pluck(:parent_category).distinct
   end
 
   def show
-    render json: current_user.categories.where(parent_category_id: ParentCategory.find_by("lower(name) = ?", params[:id]).id)
+    render json: current_user.categories.where(parent_category_id: ParentCategory.find_by("lower(name) = ?", params[:id]).id).joins(:products).distinct
   end
 
   def create

@@ -12,10 +12,16 @@ Rails.application.routes.draw do
     get '/products', to: 'promotions_products#index'
   end
   resources :stores do
-    resources :images, :deliveries, :reviews
+    resources :images, :deliveries, :reviews, :locations
   end
   resources :mattresses do
     resources :sizes
   end
-  resources :categories, :categories_products, :financings ,:parent_categories, :searches
+  resources :categories_products, :financings ,:parent_categories, :searches, :categories
+
+  resources :parent_categories do
+    resources :categories do
+      resources :set_types, :set_types_products
+    end
+  end
 end

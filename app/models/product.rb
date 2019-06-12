@@ -8,6 +8,7 @@ class Product < ApplicationRecord
   has_and_belongs_to_many :categories
   has_and_belongs_to_many :set_types
   paginates_per 48
+  validates :name, uniqueness: true
 
   def get_price(user)
     self.set_prices.find_by(user_id: user.id).price

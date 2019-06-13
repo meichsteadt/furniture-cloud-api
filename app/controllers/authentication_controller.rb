@@ -15,7 +15,7 @@ class AuthenticationController < ApplicationController
  def authenticate_site
    command = CheckKeys.call(auth_params[:user_key], auth_params[:user_secret])
    if command.success?
-     render json: { auth_token: command.result }
+     render json: { auth_token: command.result, name: User.find(JsonWebToken.decode(command.result)["user_id"]).name}
    else
      render json: { error: command.errors }, status: :unauthorized
    end

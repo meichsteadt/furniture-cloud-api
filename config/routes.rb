@@ -17,11 +17,12 @@ Rails.application.routes.draw do
   resources :mattresses do
     resources :sizes
   end
-  resources :categories_products, :financings ,:parent_categories, :searches, :categories
 
   resources :parent_categories do
     resources :categories do
       resources :set_types, :set_types_products
     end
   end
+
+  resources :categories_products, :financings ,:parent_categories, :searches, :categories, :redirects
 end

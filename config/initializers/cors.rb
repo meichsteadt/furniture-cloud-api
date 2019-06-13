@@ -7,7 +7,7 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins 'http://localhost:4200', 'https://websites.furniturecloud.co', 'https://furniture-cloud.firebaseapp.com'
+    origins 'http://localhost:4200', 'https://websites.furniturecloud.co', 'https://furniture-cloud.firebaseapp.com', 'https://royalfurniturefresno.com', 'http://royalfurniturefresno.com'
 
     resource '*',
       headers: :any,

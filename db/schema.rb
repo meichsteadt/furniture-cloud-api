@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190628221711) do
+ActiveRecord::Schema.define(version: 20190701205447) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -147,6 +147,14 @@ ActiveRecord::Schema.define(version: 20190628221711) do
     t.datetime "updated_at",  null: false
     t.index ["product_id"], name: "index_info_requests_on_product_id", using: :btree
     t.index ["store_id"], name: "index_info_requests_on_store_id", using: :btree
+  end
+
+  create_table "init_models", force: :cascade do |t|
+    t.string   "init_modelable_type"
+    t.integer  "init_modelable_id"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+    t.index ["init_modelable_type", "init_modelable_id"], name: "index_init_models_on_init_modelable_type_and_init_modelable_id", using: :btree
   end
 
   create_table "locations", force: :cascade do |t|
@@ -331,7 +339,6 @@ ActiveRecord::Schema.define(version: 20190628221711) do
     t.string   "yellow_pages"
     t.boolean  "show_prices",       default: true
     t.boolean  "promotions",        default: true
-    t.float    "markup_default",    default: 2.2
     t.string   "name"
     t.string   "logo"
     t.string   "url"
@@ -358,6 +365,7 @@ ActiveRecord::Schema.define(version: 20190628221711) do
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
     t.string   "google_analytics"
+    t.float    "markup_default"
   end
 
   add_foreign_key "categories_users", "categories"

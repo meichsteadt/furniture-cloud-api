@@ -52,6 +52,8 @@ class ApplicationController < ActionController::API
     params.permit(:sort_by)[:sort_by] ? @sort_by = params.permit(:sort_by)[:sort_by] : @sort_by = "az"
     if @sort_by === "price"
       products.joins(:set_prices).left_joins(:promotions).order("coalesce(promotions.discount, 1) * set_prices.price desc")
+    elsif @sort_by === "priceLowHigh"
+      products.joins(:set_prices).left_joins(:promotions).order("coalesce(promotions.discount, 1) * set_prices.price asc")
     elsif @sort_by === "popularity"
       products.left_joins(:views).group("products.id").order("count(ahoy_events.id) desc")
     else

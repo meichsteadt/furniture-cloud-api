@@ -5,5 +5,6 @@ class Store < ApplicationRecord
   has_many :reviews
   has_many :locations
   belongs_to :color_pallete
+  validates :url, uniqueness: true
   has_secure_password
 end

@@ -2,6 +2,7 @@ class Product < ApplicationRecord
   has_many :product_items
   has_many :set_prices
   has_many :related_products
+  has_many :init_models, as: :init_modelable
   belongs_to :brand
   has_and_belongs_to_many :users
   has_and_belongs_to_many :promotions

@@ -46,22 +46,23 @@ class HomeleganceApi
     aaa = true
     @kiosk_products.each_with_index do |p, i|
       parent_category = p["category"]
-      puts "***********************#{parent_category}**************************"
+      # puts "***********************#{parent_category}**************************"
       prices = @kiosk_set_prices.find_all {|e| e[0] =~ /#{p["number"].delete("*")}\*/}
 
       prices = @kiosk_set_prices.find_all {|e| e[0] =~ /#{p["number"]}/} if prices.empty? && parent_category == "seating" && p["number"] =~ /-3$/
+
       prices.each do |price|
         unless Product.find_by(name: price[0])
-        set = set_descs(parent_category, price[0], i)
-        prod = @user.products.create(
-          name: price[0],
-          description: p["description"],
-          images: p["images"],
-          thumbnail: p["thumbnail"],
-          brand_id: 1,
-          set_desc: set[:desc],
-          set_name: set[:name],
-        )
+          set = set_descs(parent_category, price[0], i)
+          prod = @user.products.create(
+            name: price[0],
+            description: p["description"],
+            images: p["images"],
+            thumbnail: p["thumbnail"],
+            brand_id: 1,
+            set_desc: set[:desc],
+            set_name: set[:name],
+          )
 
           categories = @kiosk_product_categories[prod.name.split("*")[0]]
           categories ||= @kiosk_product_categories[prod.name.split("*")[0]+ "*"]
@@ -79,16 +80,23 @@ class HomeleganceApi
 
           if categories
             categories.each do |category|
-              prod.categories << Category.find_by(
-                parent_category_id: ParentCategory.find_by(name: parent_category.titlecase).id,
-                name: category
-              )
+              if parent_category == "seating"
+                prod.categories << Category.find_by(
+                  parent_category_id: ParentCategory.find_by(name: "Living Room").id,
+                  name: category
+                )
+              else
+                prod.categories << Category.find_by(
+                  parent_category_id: ParentCategory.find_by(name: parent_category.titlecase).id,
+                  name: category
+                )
+              end
             end
           end
 
           @user.set_prices.create(
             product_id: prod.id,
-            price: round(price[1] * @user.stores.first.markup_default)
+            price: price[1] *  @user.markup_default
           )
 
           create_product_items(p["id"], prod)
@@ -113,17 +121,17 @@ class HomeleganceApi
             name: pi["name"],
             price: pi["price"]
           )
-          new_pi.prices.new(user_id: @user.id, price: round(pi.price * @user.stores.first.markup_default))
+          new_pi.prices.new(user_id: @user.id, price: pi.price * @user.markup_default)
         end
 
-        puts new_prod
+        # puts new_prod
 
         price = new_prod.product_items.find_all {|e| e.name =~ /Queen/}.first
         if price
           price = price.price
           if new_prod.save!
             @user.products << new_prod
-            new_prod.set_prices.create(user_id: @user.id, price: round(price * @user.stores.first.markup_default))
+            new_prod.set_prices.create(user_id: @user.id, price: price * @user.markup_default)
             new_prod.categories << Category.find_by(name: "Beds/Headboards")
           end
         end
@@ -140,7 +148,7 @@ class HomeleganceApi
           price: p["price"],
         )
 
-        pi.prices.create(user_id: @user.id, price: round(pi.price * @user.stores.first.markup_default))
+        pi.prices.create(user_id: @user.id, price: pi.price * @user.markup_default)
       end
     end
   end

@@ -54,9 +54,17 @@ end
 Brand.create(name: "Homelegance")
 
 HomeleganceApi.new({user_id: 1}).create_products
+
+Product.where("products.name LIKE ?", "%*4%").joins(categories: :parent_category).where("parent_categories.name = 'Youth'").update("4pc Twin Bedroom Set")
+
+@user.products.delete(Product.where.not("products.name LIKE ?", "%*4%").joins(categories: :parent_category).where("parent_categories.name = 'Youth'"))
+
+@user.products.delete(Product.where.not("products.name LIKE ?", "%*4%").joins(categories: :parent_category).where("parent_categories.name = 'Bedroom'"))
+
+
 @promo = Promotion.create(image: "https://royalfurniturefresno.com/assets/summer_sale2.png", discount: 0.9, user_id: @user.id, name: "Summer Sale")
 
-@bedroom_sets = Category.find_by(name: "Bedroom Sets")
+@bedroom_sets = Category.find_by(name: "Bedroom Sets").where.not("set_name LIKE ?", "%5pc%")
 @dining_sets = Category.find_by(name: "Dining Sets")
 @promo.products << @bedroom_sets.products
 @promo.products << @dining_sets.products

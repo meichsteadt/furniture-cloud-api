@@ -45,4 +45,8 @@ class User < ApplicationRecord
     user.load_defaults
     user.create_prices
   end
+
+  def remove_5pc_sets
+    
+  end
 end

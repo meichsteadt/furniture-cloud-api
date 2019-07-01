@@ -1,0 +1,2 @@
+class ColorPallete < ApplicationRecord
+end

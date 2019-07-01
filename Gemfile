@@ -23,6 +23,7 @@ gem 'simple_command'
 gem 'kaminari'
 gem 'rest-client'
 gem 'dotenv-rails'
+gem 'ahoy_matey'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 

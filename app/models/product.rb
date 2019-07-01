@@ -7,6 +7,7 @@ class Product < ApplicationRecord
   has_and_belongs_to_many :promotions
   has_and_belongs_to_many :categories
   has_and_belongs_to_many :set_types
+  has_many :views, class_name: "Ahoy::Event"
   paginates_per 48
   validates :name, uniqueness: true
 

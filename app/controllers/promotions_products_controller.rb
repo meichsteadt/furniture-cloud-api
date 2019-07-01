@@ -19,6 +19,8 @@ private
     params.permit(:sort_by)[:sort_by] ? @sort_by = params.permit(:sort_by)[:sort_by] : @sort_by = "az"
     if @sort_by === "price"
       products.joins(:set_prices).order("set_prices.price desc")
+    elsif @sort_by === "popularity"
+      products.left_joins(:views).group("products.id").order("count(ahoy_events.id) desc")
     else
       return products.order("name asc")
     end

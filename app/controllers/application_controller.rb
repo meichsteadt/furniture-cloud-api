@@ -17,7 +17,7 @@ class ApplicationController < ActionController::API
   end
 
   def check_keys
-    @current_user ||= AuthorizeApiRequest.call(request.headers, false).result
+    @current_user ||= AuthorizeApiRequest.call(request.headers, false).result.user
     unless @current_user
       render json: { error: 'Not Authorized' }, status: 401
     end
@@ -52,6 +52,8 @@ class ApplicationController < ActionController::API
     params.permit(:sort_by)[:sort_by] ? @sort_by = params.permit(:sort_by)[:sort_by] : @sort_by = "az"
     if @sort_by === "price"
       products.joins(:set_prices).left_joins(:promotions).order("coalesce(promotions.discount, 1) * set_prices.price desc")
+    elsif @sort_by === "popularity"
+      products.left_joins(:views).group("products.id").order("count(ahoy_events.id) desc")
     else
       return products.order("name asc")
     end

@@ -10,10 +10,51 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190607223637) do
+ActiveRecord::Schema.define(version: 20190628221711) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "ahoy_events", force: :cascade do |t|
+    t.integer  "visit_id"
+    t.integer  "user_id"
+    t.string   "name"
+    t.jsonb    "properties"
+    t.datetime "time"
+    t.integer  "product_id"
+    t.index "properties jsonb_path_ops", name: "index_ahoy_events_on_properties_jsonb_path_ops", using: :gin
+    t.index ["name", "time"], name: "index_ahoy_events_on_name_and_time", using: :btree
+    t.index ["user_id"], name: "index_ahoy_events_on_user_id", using: :btree
+    t.index ["visit_id"], name: "index_ahoy_events_on_visit_id", using: :btree
+  end
+
+  create_table "ahoy_visits", force: :cascade do |t|
+    t.string   "visit_token"
+    t.string   "visitor_token"
+    t.integer  "user_id"
+    t.string   "ip"
+    t.text     "user_agent"
+    t.text     "referrer"
+    t.string   "referring_domain"
+    t.text     "landing_page"
+    t.string   "browser"
+    t.string   "os"
+    t.string   "device_type"
+    t.string   "country"
+    t.string   "region"
+    t.string   "city"
+    t.string   "utm_source"
+    t.string   "utm_medium"
+    t.string   "utm_term"
+    t.string   "utm_content"
+    t.string   "utm_campaign"
+    t.string   "app_version"
+    t.string   "os_version"
+    t.string   "platform"
+    t.datetime "started_at"
+    t.index ["user_id"], name: "index_ahoy_visits_on_user_id", using: :btree
+    t.index ["visit_token"], name: "index_ahoy_visits_on_visit_token", unique: true, using: :btree
+  end
 
   create_table "brands", force: :cascade do |t|
     t.string   "logo"
@@ -46,6 +87,25 @@ ActiveRecord::Schema.define(version: 20190607223637) do
     t.index ["user_id"], name: "index_categories_users_on_user_id", using: :btree
   end
 
+  create_table "color_palletes", force: :cascade do |t|
+    t.string   "primary_color"
+    t.string   "secondary_color"
+    t.string   "highlight_color"
+    t.string   "lowlight_color"
+    t.string   "accent_color"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  create_table "customers", force: :cascade do |t|
+    t.string   "name"
+    t.string   "email"
+    t.integer  "store_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["store_id"], name: "index_customers_on_store_id", using: :btree
+  end
+
   create_table "deliveries", force: :cascade do |t|
     t.integer  "store_id"
     t.string   "name"
@@ -74,6 +134,19 @@ ActiveRecord::Schema.define(version: 20190607223637) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["store_id"], name: "index_images_on_store_id", using: :btree
+  end
+
+  create_table "info_requests", force: :cascade do |t|
+    t.integer  "store_id"
+    t.integer  "product_id"
+    t.integer  "customer_id"
+    t.string   "name"
+    t.string   "email"
+    t.string   "note"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.index ["product_id"], name: "index_info_requests_on_product_id", using: :btree
+    t.index ["store_id"], name: "index_info_requests_on_store_id", using: :btree
   end
 
   create_table "locations", force: :cascade do |t|
@@ -261,6 +334,12 @@ ActiveRecord::Schema.define(version: 20190607223637) do
     t.float    "markup_default",    default: 2.2
     t.string   "name"
     t.string   "logo"
+    t.string   "url"
+    t.string   "favicon"
+    t.string   "key"
+    t.string   "password_digest"
+    t.integer  "color_pallete_id",  default: 1
+    t.string   "email"
   end
 
   create_table "user_keys", force: :cascade do |t|

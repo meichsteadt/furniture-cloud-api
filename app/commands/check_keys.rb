@@ -1,26 +1,27 @@
 class CheckKeys
   prepend SimpleCommand
 
-  def initialize(key, secret)
-    @key = key
+  def initialize(url, secret)
+    @url = url
     @secret = secret
   end
 
   def call
-    JsonWebToken.encode({user_id: user.id, crm: false}) if user
+    JsonWebToken.encode({store_id: store.id, crm: false}) if store
   end
 
   private
 
-  attr_accessor :key, :secret
+  attr_accessor :url, :secret
 
-  def user
-    user_key = UserKey.find_by_key(Base64.decode64(key))
-    return user_key.user if user_key && user_key.authenticate(Base64.decode64(secret))
+  def store
+    # binding.pry
+    store = Store.find_by_url(Base64.decode64(@url))
+    return store if store && store.authenticate(Base64.decode64(secret))
 
     # used for testing with postman
-    # user_key = UserKey.find_by_key(key)
-    # return user_key.user if user_key && user_key.authenticate(secret)
+    # user_url = UserKey.find_by_url(url)
+    # return user_url.user if user_url && user_url.authenticate(secret)
     errors.add :user_authentication, 'invalid credentials'
     nil
   end

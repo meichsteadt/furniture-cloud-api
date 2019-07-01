@@ -12,7 +12,7 @@ Rails.application.routes.draw do
     get '/products', to: 'promotions_products#index'
   end
   resources :stores do
-    resources :images, :deliveries, :reviews, :locations
+    resources :images, :deliveries, :reviews, :locations, :info_requests, :customers, :color_palletes
   end
   resources :mattresses do
     resources :sizes
@@ -24,5 +24,5 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :categories_products, :financings ,:parent_categories, :searches, :categories, :redirects
+  resources :categories_products, :financings ,:parent_categories, :searches, :categories, :redirects, :popular_products
 end

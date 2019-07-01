@@ -21,7 +21,7 @@ class AuthorizeApiRequest
       end
     else
         if decoded_auth_token
-          @user ||= User.find(decoded_auth_token[:user_id])
+          @user ||= Store.find(decoded_auth_token[:store_id])
         end
     end
     @user || errors.add(:token, 'Invalid token') && nil

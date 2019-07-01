@@ -20,7 +20,7 @@ private
   end
 
   def parent_category_id
-    ParentCategory.find_by("lower(name) = ?", allowed_params[:parent_category])
+    ParentCategory.find_by("lower(name) = ?", unlink_name(allowed_params[:parent_category]).downcase)
   end
 
   def allowed_params

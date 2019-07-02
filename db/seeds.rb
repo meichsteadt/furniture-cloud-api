@@ -64,9 +64,9 @@ Product.where("products.name LIKE ?", "%*4%").joins(categories: :parent_category
 
 @promo = Promotion.create(image: "https://royalfurniturefresno.com/assets/summer_sale2.png", discount: 0.9, user_id: @user.id, name: "Summer Sale")
 
-@bedroom_sets = Category.find_by(name: "Bedroom Sets").where.not("set_name LIKE ?", "%5pc%")
+@bedroom_sets = Category.find_by(name: "Bedroom Sets")
 @dining_sets = Category.find_by(name: "Dining Sets")
-@promo.products << @bedroom_sets.products
+@promo.products << @bedroom_sets.products.where.not("set_name LIKE ?", "%5pc%")
 @promo.products << @dining_sets.products
 
 Product.all.each {|e| e.init_models.create}

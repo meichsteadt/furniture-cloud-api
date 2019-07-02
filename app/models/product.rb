@@ -37,7 +37,7 @@ class Product < ApplicationRecord
     {products: product, mattresses: mattresses}
   end
 
-  def set_related_products
-
+  def self.defaults
+    self.joins(:init_models)
   end
 end

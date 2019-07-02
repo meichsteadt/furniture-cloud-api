@@ -5,4 +5,8 @@ class Category < ApplicationRecord
   belongs_to :parent_category
   has_many :init_models, as: :init_modelable
   has_many :set_types
+
+  def self.defaults
+    self.joins(:init_models)
+  end
 end

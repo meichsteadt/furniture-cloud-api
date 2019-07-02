@@ -11,25 +11,26 @@ class User < ApplicationRecord
   has_many :set_prices
   has_many :financings
   has_one :user_key
+  has_many :views, class_name: "Ahoy::Event"
   validates :email, uniqueness: true
   validates :markup_default, presence: true
   validates :password, :length => {minimum: 6}, :on => :create
 
   def load_defaults
-    self.products << Product.where(id: InitModel.where(init_modelable_type: "Product").pluck(:init_modelable_id))
-    self.categories << Category.find(InitModel.where(init_modelable_type: "Category").pluck(:init_modelable_id))
-    self.parent_categories << ParentCategory.find(InitModel.where(init_modelable_type: "ParentCategory").pluck(:init_modelable_id))
-    Promotion.find(InitModel.where(init_modelable_type: "Promotion").pluck(:init_modelable_id)).each do |promo|
+    self.products << Product.defaults
+    self.categories << Category.defaults
+    self.parent_categories << ParentCategory.defaults
+    Promotion.where(id: InitModel.where(init_modelable_type: "Promotion").pluck(:init_modelable_id)).each do |promo|
       @promo = self.promotions.create(promo.attributes.reject {|e| ["id", "user_id", "created_at", "update_at"].include?(e) })
       @promo.products << promo.products
     end
   end
 
   def create_prices
-    SetPrice.find(InitModel.where(init_modelable_type: "SetPrice").pluck(:init_modelable_id)).each do |set_price|
+    SetPrice.defaults.each do |set_price|
       self.set_prices.create(product_id: set_price.product_id, price: set_price.price * self.markup_default)
     end
-    Price.find(InitModel.where(init_modelable_type: "Price").pluck(:init_modelable_id)).each do |price|
+    Price.defaults.each do |price|
       self.prices.create(product_item_id: price.product_item_id, price: price.price * self.markup_default)
     end
   end
@@ -47,6 +48,6 @@ class User < ApplicationRecord
   end
 
   def remove_5pc_sets
-    
+
   end
 end

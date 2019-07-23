@@ -15,7 +15,6 @@ class CheckKeys
   attr_accessor :url, :secret
 
   def store
-    # binding.pry
     store = Store.find_by_url(Base64.decode64(@url))
     return store if store && Store.first.authenticate(Base64.decode64(secret))
 

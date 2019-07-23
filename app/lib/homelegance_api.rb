@@ -6,16 +6,16 @@ class HomeleganceApi
     @user = User.find(params[:user_id])
     @kiosk_url = "http://localhost:3001"
     @sales_url = "http://localhost:3002"
-    @sales_username = ENV['sales_username']
-    @sales_password = ENV['sales_password']
-    @sales_auth_token = authenticate_sales
-    @headers = {'Authorization': @sales_auth_token}
-    @best_sellers = get_best_sellers
-    @kiosk_products = get_kiosk_products
-    @kiosk_product_items = get_kiosk_product_items
-    @kiosk_product_categories = get_kiosk_categories
-    @kiosk_set_prices = get_set_prices
-    @created_products = []
+    # @sales_username = ENV['sales_username']
+    # @sales_password = ENV['sales_password']
+    # @sales_auth_token = authenticate_sales
+    # @headers = {'Authorization': @sales_auth_token}
+    # @best_sellers = get_best_sellers
+    # @kiosk_products = get_kiosk_products
+    # @kiosk_product_items = get_kiosk_product_items
+    # @kiosk_product_categories = get_kiosk_categories
+    # @kiosk_set_prices = get_set_prices
+    # @created_products = []
   end
 
   def authenticate_sales
@@ -106,6 +106,57 @@ class HomeleganceApi
     create_beds_only
   end
 
+  def get_occasional
+    unless Categories.pluck(:name).include?("Occasional")
+      category = Category.create(name: "Occasional", image: "https://s3-us-west-1.amazonaws.com/homelegance-resized/Images_MidRes_For+Customer+Advertisement/8219-30.jpg", parent_category_id: ParentCategory.find_by_name("Living Room").id)
+    else
+      category = Categories.find_by_name("Occasional")
+    end
+    unless @user.categories.include?(category)
+      @user.categories << category
+    end
+    products = JSON.parse(RestClient.get(@kiosk_url + "/products_where?occasional=true"))
+
+    product_items = JSON.parse(RestClient.post(@kiosk_url + "/products_where?product_items=true", {product_ids: products.map {|e| e["id"]}}))
+
+    prices = JSON.parse(RestClient.post(@kiosk_url + "/products_where?prices=true&occasional=true", {numbers: products.map {|e| e["number"]}}))
+
+    products.each do |product|
+      new_product = Product.find_by_name(product["number"])
+      unless new_product
+        new_product = User.first.products.create(
+          name: product["number"],
+          description: product["description"],
+          images: product["images"],
+          thumbnail: product["thumbnail"],
+          brand_id: 1,
+          set_desc: "Occasional Set",
+          set_name: "Occasional Set",
+        )
+      end
+      set_price = User.first.set_prices.create(product_id: new_product.id, price: prices.to_h[new_product["name"]])
+
+      product_items.select {|e| e["product_id"] == product["id"]}.each do |p|
+        if p["price"]
+          pi = new_product.product_items.create(
+            dimensions: p["dimensions"],
+            name: p["description"],
+            price: p["price"],
+          )
+
+          pi.prices.create(user_id: @user.id, price: pi.price)
+        end
+      end
+
+      pi_number_suffix = product_items.map{|e| e["number"].split("-")[-1]}.include?()
+      pns = pi_number_suffix
+      if pns.include?("30") && pns.include?("04") && pns.include?("05")
+        new_price = new_product.product_items.pluck(:price).sum
+        set_price.update(price: new_price)
+      end
+    end
+  end
+
   def create_beds_only
     ParentCategory.find_by(name: "Bedroom").products.where("products.name LIKE ?", "%-1%").except(:id).each do |product|
       name = product.name.split("*")[0] + "*"
@@ -187,6 +238,12 @@ class HomeleganceApi
         return {
           desc:"Sofa Love Set",
           name: "Sofa & Love Seat"
+        }
+      end
+      if category == "occasional"
+        return {
+          desc: "Occasional Set",
+          name: "Occasional Set"
         }
       end
     end

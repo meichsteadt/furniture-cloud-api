@@ -6,5 +6,6 @@ class Store < ApplicationRecord
   has_many :locations
   belongs_to :color_pallete
   validates :url, uniqueness: true
+  has_many :visits, class_name: "Ahoy::Visit"
   has_secure_password
 end

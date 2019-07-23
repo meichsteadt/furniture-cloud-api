@@ -7,7 +7,9 @@ class AuthenticateUser
   end
 
   def call
-    JsonWebToken.encode({user_id: user.id, crm: true}) if user
+    if user
+      JsonWebToken.encode({user_id: user.id, crm: true})
+    end
   end
 
   private

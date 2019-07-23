@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190701205447) do
+ActiveRecord::Schema.define(version: 20190715222558) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20190701205447) do
     t.jsonb    "properties"
     t.datetime "time"
     t.integer  "product_id"
+    t.integer  "store_id"
     t.index "properties jsonb_path_ops", name: "index_ahoy_events_on_properties_jsonb_path_ops", using: :gin
     t.index ["name", "time"], name: "index_ahoy_events_on_name_and_time", using: :btree
     t.index ["user_id"], name: "index_ahoy_events_on_user_id", using: :btree
@@ -52,6 +53,7 @@ ActiveRecord::Schema.define(version: 20190701205447) do
     t.string   "os_version"
     t.string   "platform"
     t.datetime "started_at"
+    t.integer  "store_id"
     t.index ["user_id"], name: "index_ahoy_visits_on_user_id", using: :btree
     t.index ["visit_token"], name: "index_ahoy_visits_on_visit_token", unique: true, using: :btree
   end

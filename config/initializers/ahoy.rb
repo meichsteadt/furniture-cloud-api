@@ -1,16 +1,20 @@
 class Ahoy::Store < Ahoy::DatabaseStore
-  def user
+  def store
     res = AuthorizeApiRequest.call(request.headers, false).result
   end
 
+  def store
+    store.user
+  end
+
   def track_visit(data)
-    if data[:user_id]
+    if data[:store_id]
       super(data)
     end
   end
 
   def track_event(data)
-    if data[:user_id]
+    if data[:store_id]
       data[:product_id] = data[:properties][:product_id]
       super(data)
     end

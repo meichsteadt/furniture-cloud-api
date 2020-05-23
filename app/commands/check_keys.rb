@@ -16,7 +16,7 @@ class CheckKeys
 
   def store
     store = Store.find_by_url(Base64.decode64(@url))
-    return store if store && Store.first.authenticate(Base64.decode64(secret))
+    return store if store && store.authenticate(Base64.decode64(secret))
 
     # used for testing with postman
     # user_url = UserKey.find_by_url(url)

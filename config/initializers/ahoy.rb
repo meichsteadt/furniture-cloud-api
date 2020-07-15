@@ -8,13 +8,16 @@ class Ahoy::Store < Ahoy::DatabaseStore
   end
 
   def track_visit(data)
-    if data[:store_id]
+    if request.parameters[:store_id]
+      data[:store_id] = request.parameters[:store_id]
       super(data)
     end
   end
 
   def track_event(data)
-    if data[:store_id]
+    @visit = Ahoy::Visit.find_by(visit_token: data[:visit_token]) if data[:visit_token]
+    if @visit
+      data[:store_id] = @visit.store_id
       data[:product_id] = data[:properties][:product_id]
       super(data)
     end

@@ -1,7 +1,14 @@
 class ProductsController < ApplicationController
   before_action :set_product, only: [:show, :destroy, :update]
+  before_action :set_cart, only: [:index]
   def index
-    render json: formatted_response(current_user.products)
+    if @cart
+      @products = formatted_response(Product.joins(:cart_items).where("cart_items.cart_id = ?", @cart.id))
+    else
+      @products = formatted_response(current_user.products)
+    end
+
+    render json: @products
   end
 
   def show
@@ -35,6 +42,10 @@ private
 
   def set_product
     @product = current_user.products.find(params[:id])
+  end
+
+  def set_cart
+    @cart = Cart.find(params[:cart_id])
   end
 
   def product_params

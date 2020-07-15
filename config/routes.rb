@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   post 'authenticate', to: 'authentication#authenticate'
   post 'authenticate_site', to: 'authentication#authenticate_site'
@@ -24,5 +25,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :categories_products, :financings ,:parent_categories, :searches, :categories, :redirects, :popular_products
+  resources :categories_products, :financings ,:parent_categories, :searches, :categories, :redirects, :popular_products, :cart_items
+  resources :visits do
+    resources :carts
+  end
+  resources :carts do
+    resources :cart_items, :products
+  end
 end

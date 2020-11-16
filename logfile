@@ -1,0 +1,2 @@
+2020-11-16 11:51:59.652 EST [8565] FATAL:  database files are incompatible with server
+2020-11-16 11:51:59.652 EST [8565] DETAIL:  The data directory was initialized by PostgreSQL version 12, which is not compatible with this version 13.0.

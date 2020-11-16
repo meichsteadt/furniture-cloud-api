@@ -1,6 +1,8 @@
 class CartItemsController < ApplicationController
   before_action :set_cart_item, only: [:show, :update, :destroy]
-  before_action :set_cart, only [:index]
+  before_action :set_cart
+  skip_before_action :authenticate_request
+  before_action :check_keys
 
   # GET /cart_items
   def index
@@ -19,7 +21,7 @@ class CartItemsController < ApplicationController
 
   # POST /cart_items
   def create
-    @cart_item = CartItem.new(cart_item_params)
+    @cart_item = @cart.cart_items.new(cart_item_params)
 
     if @cart_item.save
       render json: @cart_item, status: :created, location: @cart_item
@@ -54,6 +56,6 @@ class CartItemsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def cart_item_params
-      params.require(:cart_item).permit(:cart_id, :product_item_id)
+      params.require(:cart_item).permit(:cart_id, :product_id)
     end
 end

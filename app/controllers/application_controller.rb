@@ -41,7 +41,11 @@ class ApplicationController < ActionController::API
     on_promo = promotion_prices.keys
     h = {
       arr: Kaminari.paginate_array(arr).page(get_page).per(per).map {|e|
-        {product: e, set_price: prices.find {|s| s.product_id == e.id}.price, on_promo: on_promo.include?(e.id)}
+        {
+          product: e,
+          set_price: prices.find {|s| s.product_id == e.id}.price,
+          on_promo: on_promo.include?(e.id),
+        }
       },
       pages: Kaminari.paginate_array(arr).page(get_page).per(per).total_pages
     }

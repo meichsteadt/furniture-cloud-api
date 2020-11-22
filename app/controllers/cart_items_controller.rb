@@ -1,5 +1,6 @@
 class CartItemsController < ApplicationController
-  before_action :set_cart_item, only: [:show, :update, :destroy]
+  before_action :set_cart_item, only: [:show]
+  before_action :set_cart_item_from_product, only: [:destroy, :update]
   before_action :set_cart
   skip_before_action :authenticate_request
   before_action :check_keys
@@ -7,7 +8,11 @@ class CartItemsController < ApplicationController
   # GET /cart_items
   def index
     if @cart
-      @cart_items = Product.joins(:cart_items).where("cart_items.cart_id = ?", @cart.id)
+      if !params[:cart_item_only]
+        @cart_items = Product.joins(:cart_items).where("cart_items.cart_id = ?", @cart.id)
+      else
+        @cart_items = @cart.cart_items
+      end
     else
       @cart_items = CartItem.all
     end
@@ -50,12 +55,16 @@ class CartItemsController < ApplicationController
       @cart_item = CartItem.find(params[:id])
     end
 
+    def set_cart_item_from_product
+      @cart_item = CartItem.find_by(cart_id: params[:cart_id], product_id: params[:product_id])
+    end
+
     def set_cart
       @cart = Cart.find(params[:cart_id])
     end
 
     # Only allow a trusted parameter "white list" through.
     def cart_item_params
-      params.require(:cart_item).permit(:cart_id, :product_id)
+      params.require(:cart_item).permit(:cart_id, :product_id, :quantity)
     end
 end

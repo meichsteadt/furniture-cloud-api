@@ -42,7 +42,10 @@ class CartsController < ApplicationController
 
   # DELETE /carts/1
   def destroy
-    @cart.destroy
+    if params[:product_id]
+      @cart_item = CartItem.find_by(product_id: params[:product_id])
+      @cart_item.destroy
+    end
   end
 
   private
